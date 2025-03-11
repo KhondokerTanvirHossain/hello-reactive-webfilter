@@ -194,6 +194,12 @@ MAX_HISTORY=20
 LOG_LEVEL_ROOT=INFO
 ```
 
+Add dependency in build.gradle:
+
+```gradle
+implementation 'net.logstash.logback:logstash-logback-encoder:7.4'
+```
+
 The MDC context is populated with request information:
 
 ```java
