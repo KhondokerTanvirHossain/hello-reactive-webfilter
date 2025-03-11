@@ -1,2 +1,0 @@
-2025-03-10 12:24:23.237 [ program-management, , ,   ] [Request-Trace-Id: ] [SpringApplicationShutdownHook] INFO  GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2025-03-10 12:24:23.250 [ program-management, , ,   ] [Request-Trace-Id: ] [netty-shutdown] INFO  GracefulShutdown - Graceful shutdown complete
