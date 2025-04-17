@@ -237,6 +237,49 @@ private void setMdcAttributeForLogBack(ServerWebExchange serverWebExchange) {
 
 ![alt text](image.png)
 
+### Enabling Context Propagation Across Threads in Reactive Spring
+
+To ensure that the same trace ID is propagated when switching threads in a reactive Spring application, the following configuration is added. This configuration uses Reactor's `Hooks` to enable MDC (Mapped Diagnostic Context) propagation across thread boundaries:
+
+```java
+
+@Configuration
+public class HooksConfig {
+
+    public HooksConfig() {
+        Hooks.onEachOperator(ApplicationContext.class.getName(), Operators.lift((scannable, coreSubscriber) -> new CoreSubscriber<Object>() {
+            @Override
+            public Context currentContext() {
+                return coreSubscriber.currentContext();
+            }
+
+            @Override
+            public void onSubscribe(Subscription s) {
+                if (coreSubscriber.currentContext().hasKey("mdcContextMap")) {
+                    Optional.ofNullable(coreSubscriber.currentContext().get("mdcContextMap"))
+                        .ifPresent(contextMap -> MDC.setContextMap((Map<String, String>) contextMap));
+                }
+                coreSubscriber.onSubscribe(s);
+            }
+
+            @Override
+            public void onNext(Object o) {
+                coreSubscriber.onNext(o);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                coreSubscriber.onError(t);
+            }
+
+            @Override
+            public void onComplete() {
+                coreSubscriber.onComplete();
+            }
+        }));
+    }
+}
+```
 ### WebClient Configuration with Tracing
 
 The WebClient is configured with timeout, tracing, and logging:
